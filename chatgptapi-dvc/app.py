@@ -7,11 +7,11 @@
 @Read: 
 """
 import json
+import openai
 import pickle
 import requests
 from flask import Flask
 from flask import Flask, jsonify, request
-import openai
 from apiKeys import *
 
 app = Flask(__name__)
@@ -20,7 +20,8 @@ openai.api_key = openAIKey
 
 # prompt = "请用户外运动，悬浮式背包，超大容量写一段广告语，重点突出轻便，高效，全年龄段适用，限时特惠，希望人们快快下单。适合情人节使用，是送给女朋友的精美礼物。"
 # prompt = "请针对情人节，送女友，真皮，皮包，防水，出门旅行，逛街写一段广告语，重点突出便宜实惠，坚固耐用"
-# postman function
+
+# todo postman function
 post_url = 'https://api.openai.com/v1/completions'
 headers = {
     'Content-Type': 'application/json',
@@ -53,8 +54,10 @@ def startfun():
             response = openai.Completion.create(
                 model="text-davinci-003",
                 # prompt="The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly."
-                #        "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?\nHuman: I'd like to cancel my subscription.\nAI:",
-                prompt=prompt, temperature=0.9, max_tokens=300, top_p=1, frequency_penalty=0.0, presence_penalty=0.6, stop=[" Human:", " AI:"]
+                #        "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?\n"
+                #        "Human: I'd like to cancel my subscription.\nAI:",
+                prompt=prompt, temperature=0.9, max_tokens=300, top_p=1, frequency_penalty=0.0, presence_penalty=0.6,
+                stop=[" Human:", " AI:"]
             )
             # res = response.to_dict()
             res = response.to_dict()['choices'][0].text
