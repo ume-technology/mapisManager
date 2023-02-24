@@ -166,9 +166,9 @@ def getNewGoodsTitle():
             url = 'http://192.168.4.132:5003/goodsInfo'
             params = {'goodsId': 0, 'goodsTitle': text}
             tags = requests.get(url=url, params=params).text
-            print("*" * 50)
-            print(tags)
-            print("*" * 50)
+            # print("*" * 50)
+            # print(tags)
+            # print("*" * 50)
             # model没有识别出来标签的情况
             if tags is None or not tags or len(tags) == 0:
                 # 拼接后直接去生成广告语
