@@ -166,9 +166,6 @@ def getProductCode():
         countTags = 0
         for index, row in enumerate(targetProductDF.itertuples()):
             for label in allLabels:
-                # todo 先处理一个特殊标签
-                # if label == 'prt品类':
-                #     label = '通用品类'
                 value = getattr(row, label)
                 if value == '0':
                     continue
