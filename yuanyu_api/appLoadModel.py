@@ -69,7 +69,7 @@ def generateAdsContents(text, temperature):
     return output_text
 
 
-@app.route('/boseInfo', methods=['POST'])
+@app.route('/modelGenerateContent', methods=['POST'])
 def getNewGoodsTitle():
     # tagDict = request.args.get('tagDict')  # todo get
 

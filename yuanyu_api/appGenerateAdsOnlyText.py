@@ -21,7 +21,7 @@ app = Flask(__name__)
 cl = clueai.Client(yuanyuKeys, check_api_key=True)
 
 
-@app.route('/generateContent', methods=['GET', 'POST'])
+@app.route('/clientGenerateContent', methods=['GET', 'POST'])
 def returnAds():
     # tagDict = request.args.get('tagDict')  # todo get
 

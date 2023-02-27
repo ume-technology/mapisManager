@@ -19,7 +19,7 @@ from yuanyu_api.readLineGoodsWithTags import dataDF, groupsbyID, allLabels
 app = Flask(__name__)
 
 
-@app.route('/boseInfo', methods=['GET', 'POST'])
+@app.route('/baseInfo', methods=['GET', 'POST'])
 def getProductCode():
     try:
         # todo get values
@@ -67,7 +67,8 @@ def getProductCode():
             return {'status Code': 1, 'info': tagsDict}
     except Exception as e:
         print(e)
-        return {'status Code': -1, 'info': '在给定产品ID和产品名称请求相应标签时，出现了一些预料之外的错误。'}
+        return {'status Code': -1, 'info': '在给定产品ID和产品名称请求相应标签时，出现了一些预料之外的错误。\n'
+                                           '可能是因为传入了错误的商品ID或商品名称导致商品查询时出现异常。'}
 
 
 if __name__ == '__main__':

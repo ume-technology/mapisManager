@@ -69,8 +69,8 @@ passwd = 'uwV3n9bNPzUTf3N7'
 db = 'gkml'
 conn = pymysql.connect(host=host, port=port, user=user, db=db, password=passwd, charset='utf8')
 cursor = conn.cursor()
-sql = """ select * from twGoods limit 1000"""
-# sql = """ select * from twGoods"""
+# sql = """ select * from twGoods limit 1000"""
+sql = """ select * from twGoods"""
 # count_ = cursor.execute(sql)  # 返回的是查询到的数据库的数据条目数量
 # data = cursor.fetchall()  # 获取数据
 dataDF = pd.read_sql(sql, conn)
