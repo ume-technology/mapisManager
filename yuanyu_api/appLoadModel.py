@@ -131,7 +131,7 @@ def getNewGoodsTitle():
             results = {}
             for i in range(6):
                 prompt = "请针对：{}，卖点信息：{}写一个商品标题" \
-                         "小元：".format('矫视镜', targetTags)
+                         "小元：".format(proCls, targetTags)
                 output_text = generateAdsContents(prompt, temperature)
                 results[i] = output_text
             for i in range(6, 11):
