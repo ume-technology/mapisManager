@@ -38,6 +38,7 @@ def getProductCode():
         lineName = postValues.get('lineName')
 
         # todo 获取传入的productID的line index
+        # todo 获取的是当前这个产品ID下的所有商品；之所以要在这里获取所有商品，本质上是为了获取这个产品下的所有商品涉及到的所有标签信息
         targetProductndex = groupsbyID[proCode]
         targetProductDF = dataDF.loc[targetProductndex]
         tagsDict = {}

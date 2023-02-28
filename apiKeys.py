@@ -30,4 +30,4 @@ passwd = 'x%HpQhq8m9c#5zx@'
 
 # todo df 导入mysql数据库
 # create_engine('mysql+pymysql://用户名:密码@主机/库名?charset=utf8')
-engine = create_engine('mysql+pymysql://zhimin:uwV3n9bNPzUTf3N7@192.168.4.210/gkml?charset=utf8', echo=True)
+# engine = create_engine('mysql+pymysql://zhimin:uwV3n9bNPzUTf3N7@192.168.4.210/gkml?charset=utf8', echo=True)
