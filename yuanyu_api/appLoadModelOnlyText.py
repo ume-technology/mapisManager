@@ -27,17 +27,15 @@ def is_all_chinese(strs):
 
 
 print('start  loading  model. . . . . . . .')
-# todo change windows
-tokenizer = T5Tokenizer.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1")
-# todo change linux
-# tokenizer = T5Tokenizer.from_pretrained("/mnt/f/Pictures/premodelfiles/ClueAIChatYuan-large-v1")
-# todo change windows
-model = T5ForConditionalGeneration.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1")
-# todo change linux
-# model = T5ForConditionalGeneration.from_pretrained("/mnt/f/Pictures/premodelfiles/ClueAIChatYuan-large-v1")
+# tokenizer = T5Tokenizer.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1") # todo change windows
+# model = T5ForConditionalGeneration.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1")  # todo change windows
 
-# device = torch.device('cuda')  # todo change linux
-# model.to(device)
+tokenizer = T5Tokenizer.from_pretrained("/home/fzm/large-v1")  # todo change linux
+model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo change linux
+
+device = torch.device('cuda')  # todo change linux
+print('---------------------- use: ', device)
+model.to(device)
 print('end  loading  model . . . . . . .  .')
 
 
