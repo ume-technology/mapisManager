@@ -89,11 +89,11 @@ def returnAds():
                          "小元：".format(proName, targetTags)
                 prediction = cl.generate(model_name='ChatYuan-large', prompt=prompt)
                 results[i] = prediction.generations[0].text
-            for i in range(6, 11):
-                prompt = "请针对：{}，卖点信息：{}写一个电商标题" \
-                         "小元：".format(proName, targetTags)
-                prediction = cl.generate(model_name='ChatYuan-large', prompt=prompt)
-                results[i] = prediction.generations[0].text
+            # for i in range(6, 11):
+            #     prompt = "请针对：{}，卖点信息：{}写一个电商标题" \
+            #              "小元：".format(proName, targetTags)
+            #     prediction = cl.generate(model_name='ChatYuan-large', prompt=prompt)
+            #     results[i] = prediction.generations[0].text
             return {
                 "status": 1,
                 "Note": "从给定的商品标题中抽取了如下标签卖点信息，尝试生成了6条新的商品标题，仅做参考，如果使用建议微调文本内容！",

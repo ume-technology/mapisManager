@@ -6,7 +6,6 @@
 @Time:2023/2/15 9:21
 @Read: 可微调广告文案生成模型: 也是只使用 text 参数了
 """
-import re
 import random
 import torch
 import requests
@@ -17,14 +16,6 @@ from flask import Flask
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
-
-
-def is_all_chinese(strs):
-    for _char in strs:
-        if not '\u4e00' <= _char <= '\u9fa5':
-            return False
-    return True
-
 
 print('start  loading  model. . . . . . . .')
 # todo change windows
@@ -142,11 +133,11 @@ def getNewGoodsTitle():
                          "小元：".format(proCls, targetTags)
                 output_text = generateAdsContents(prompt, temperature)
                 results[i] = output_text
-            # for i in range(6, 11):
-            #     prompt = "请针对：{}，卖点信息：{}写一个电商标题" \
-            #              "小元：".format(proCls, targetTags)
-            #     output_text = generateAdsContents(prompt, temperature)
-            #     results[i] = output_text
+            for i in range(6, 11):
+                prompt = "请针对：{}，卖点信息：{}写一个电商标题" \
+                         "小元：".format(proCls, targetTags)
+                output_text = generateAdsContents(prompt, temperature)
+                results[i] = output_text
             return {
                 "status": 1,
                 "Note": "从给定的商品标题中抽取了如下标签卖点信息，尝试生成了6条新的商品标题，仅做参考，如果使用建议微调文本内容！",
@@ -167,48 +158,9 @@ def getNewGoodsTitle():
             lineName = postValues.get('lineName')
             temperature = postValues.get('weight')
 
-            # todo 处理产品名：such as X22010703DB-汽车去痕研磨剂; 仅仅是为了获取这个产品的产品名（类别）
-            if '-' in proName:
-                proName = proName.split('-')[1]
-            else:
-                cut_idx = 0
-                for idx, i in enumerate(proName):
-                    if is_all_chinese(i):
-                        cut_idx = idx
-                        break
-                proName = proName[cut_idx:]
-
-            # todo text中包含的产品名也要进行上述的工作以去除相同的信息
-            if '-' in text:
-                text = text.split('-')[1]
-            else:
-                cut_idx = 0
-                for idx, i in enumerate(text):
-                    if is_all_chinese(i):
-                        cut_idx = idx
-                        break
-                text = text[cut_idx:]
-
-            # todo 直接请求产品名，最好是从产品名中识别产品的proName参数
-            url = 'http://192.168.4.132:5003/goodsInfo'
-            params = {'goodsId': 0, 'goodsTitle': proName}
-            tags = requests.get(url=url, params=params).text
-            tags = eval(tags)
-
-            # todo 再次通过模型识别的品类标签，确定是否需要直接使用传入的proName
-            #      判断有几个品类；以决定是以模型识别出来的proName还是直接传入的清洗过的产品名作为产品名
-            count = 0
-            for i in tags:
-                if i[0] == 'prt品类':
-                    count += 1
-            # todo 如果模型只识别出来一个pro品类；那就把这个品类当作产品名字
-            if count == 1:
-                for i in tags:
-                    if i[0] == 'prt品类':
-                        proName = i[-1]
-
-            # todo 这里是解析text参数以生成标签，其实这里是已经进行过当前这个产品涉及的所有的商品的标签的生成了
-            #      但是这里又一次请求，是因为标签是被拼接到text中，且text还可能有新的人工输入，才又请求以捕获最完整的标签信息
+            """ 
+                       todo 这里是解析text参数以生成广告了 
+                       """
             # wait  是不是应该对text进行一些分割处理？暂时是直接过model重新识别标签
             url = 'http://192.168.4.132:5003/goodsInfo'
             params = {'goodsId': 0, 'goodsTitle': text}
@@ -216,20 +168,20 @@ def getNewGoodsTitle():
             # print("*" * 50)
             # print(tags)
             # print("*" * 50)
-
-            # todo model没有识别出来标签的情况
+            # model没有识别出来标签的情况
             if tags is None or not tags or len(tags) == 0:
-                # todo six piece； 这种情况只有输入的text信息，不需要处理tags信息
-                prompt = "请针对商品：{}，卖点如下：{}，写一段广告文案。" \
+                # 拼接后直接去生成广告语
+                prompt = "请针对：{}，卖点信息：{}写一段广告文案" \
                          "小元：".format(proName, text)
+                # todo six piece
                 results = {}
+                # generate a prediction for a prompt；需要返回得分的话，指定return_likelihoods = "GENERATION"
                 for i in range(6):
                     output_text = generateAdsContents(prompt, temperature)
                     results[i] = output_text
                 return {
                     "status": 1,
-                    "Note": "NOTags-根据给定的产品和其背后的标签信息，"
-                            "\n尝试生成了6条新的商品广告文案，仅做参考，如果使用建议组合或微调文本内容！",
+                    "Note": "从给定的商品标题中抽取了如下标签卖点信息，尝试生成了6条新的商品广告文案，仅做参考，如果使用建议组合或微调文本内容！",
                     "Ads": results
                 }
 
@@ -248,17 +200,17 @@ def getNewGoodsTitle():
                     continue
                 targetTags += ','.join(eachTagValue)
 
-            # todo six piece ；此时其实没有用 text 信息，因为text的信息已经被简化为了从其中识别出来的tags；故单纯使用标签就可以
-            prompt = "请针对商品：{}，卖点如下：{}，写一段广告文案。" \
+            prompt = "请针对：{}，卖点信息：{}写一段广告文案" \
                      "小元：".format(proName, targetTags)
+
+            # todo five piece ads
             results = {}
             for i in range(6):
                 output_text = generateAdsContents(prompt, temperature)
                 results[i] = output_text
             return {
                 "status": 1,
-                "Note": "Giikin - 根据给定的产品和其背后的标签信息，\n"
-                        "尝试生成了6条新的商品广告文案，仅做参考，如果使用建议组合或微调文本内容！",
+                "Note": "从给定的商品标题中抽取了如下标签卖点信息，尝试生成了5条新的商品广告文案，仅做参考，如果使用建议组合或微调文本内容！",
                 "Ads": results
             }
         except Exception as e:
