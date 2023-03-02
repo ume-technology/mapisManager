@@ -27,8 +27,9 @@ model = T5ForConditionalGeneration.from_pretrained(r"F:\PreModels\ClueAIChatYuan
 # todo change linux
 # model = T5ForConditionalGeneration.from_pretrained("/mnt/f/Pictures/premodelfiles/ClueAIChatYuan-large-v1")
 
-# device = torch.device('cuda')  # todo change linux
-# model.to(device)
+device = torch.device('cuda')  # todo change linux
+print("--------------------- use: ", device)
+model.to(device)
 print('end  loading  model . . . . . . .  .')
 
 
