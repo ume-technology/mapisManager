@@ -27,6 +27,15 @@ def is_all_chinese(strs):
     return True
 
 
+def preprocess(text):
+    text = text.replace("\n", "\\n").replace("\t", "\\t")
+    return text
+
+
+def postprocess(text):
+    return text.replace("\\n", "\n").replace("\\t", "\t")
+
+
 print('************************* start  loading  model *************************')
 
 # """"""
@@ -77,15 +86,6 @@ preprocessor = TextGenerationT5Preprocessor(model.model_dir)
 pipeline_t2t = pipeline(task=Tasks.text2text_generation, model=model, preprocessor=preprocessor)
 
 print('************************* end  loading  model *************************')
-
-
-def preprocess(text):
-    text = text.replace("\n", "\\n").replace("\t", "\\t")
-    return text
-
-
-def postprocess(text):
-    return text.replace("\\n", "\n").replace("\\t", "\t")
 
 
 def answer(text, sample=True, top_p=1, temperature=0.7):
