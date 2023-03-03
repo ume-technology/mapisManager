@@ -157,6 +157,7 @@ def getNewGoodsTitle():
 
     if taskName == 'ads':
         try:
+            print('================================== 开始')
             proName = postValues.get('proName')
             proCode = float(postValues.get('proCode'))
             goodsCode = float(postValues.get('goodsCode'))
@@ -176,6 +177,8 @@ def getNewGoodsTitle():
                         break
                 proName = proName[cut_idx:]
 
+            print('============================ 第一')
+
             # todo text中包含的产品名也要进行上述的工作以去除相同的信息
             if '-' in text:
                 text = text.split('-')[1]
@@ -186,6 +189,8 @@ def getNewGoodsTitle():
                         cut_idx = idx
                         break
                 text = text[cut_idx:]
+
+            print('============================ 第二')
 
             # todo 直接请求产品名，最好是从产品名中识别产品的proName参数
             url = 'http://192.168.4.132:5003/goodsInfo'
@@ -204,6 +209,8 @@ def getNewGoodsTitle():
                 for i in tags:
                     if i[0] == 'prt品类':
                         proName = i[-1]
+
+            print('============================ 第三')
 
             # todo 这里是解析text参数以生成标签，其实这里是已经进行过当前这个产品涉及的所有的商品的标签的生成了
             #      但是这里又一次请求，是因为标签是被拼接到text中，且text还可能有新的人工输入，才又请求以捕获最完整的标签信息
@@ -231,6 +238,8 @@ def getNewGoodsTitle():
                     "Ads": results
                 }
 
+            print('============================ 第四')
+
             tagDict, newTagDict = {}, {}
             for _ in eval(tags):
                 tagCls = _[0]
@@ -245,6 +254,9 @@ def getNewGoodsTitle():
                 if _ == 'prt品类':
                     continue
                 targetTags += ','.join(eachTagValue)
+
+            print('============================ 第五')
+            print(newTagDict)
 
             # todo six piece ；此时其实没有用 text 信息，因为text的信息已经被简化为了从其中识别出来的tags；故单纯使用标签就可以
             prompt = "请针对商品：{}，卖点如下：{}，写一段广告文案。" \
