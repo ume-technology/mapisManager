@@ -273,6 +273,6 @@ def getNewGoodsTitle():
 if __name__ == '__main__':
     # todo 三方铺货生成新标题使用这个接口；模型支持微调的情况
     app.config['JSON_AS_ASCII'] = False
-    app.run(host='0.0.0.0', debug=True, port=5002)
+    app.run(host='0.0.0.0', debug=True, port=5008)
     # app.run(host='127.0.0.1', debug=True, port=5000)
     # app.run(debug=False, port=5000)
