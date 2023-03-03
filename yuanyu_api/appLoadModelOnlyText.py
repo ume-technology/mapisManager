@@ -56,8 +56,8 @@ def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature =
     """
     text = preprocess(text)
     # todo change linux with GPU
-    # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)
-    encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')
+    encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)
+    # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')
     if not sample:
         out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
                              num_beams=1, length_penalty=0.6)
@@ -157,7 +157,7 @@ def getNewGoodsTitle():
 
     if taskName == 'ads':
         try:
-            print('================================== 开始')
+            # print('================================== 开始')
             proName = postValues.get('proName')
             proCode = float(postValues.get('proCode'))
             goodsCode = float(postValues.get('goodsCode'))
@@ -177,7 +177,7 @@ def getNewGoodsTitle():
                         break
                 proName = proName[cut_idx:]
 
-            print('============================ 第一')
+            # print('============================ 第一')
 
             # todo text中包含的产品名也要进行上述的工作以去除相同的信息
             if '-' in text:
@@ -190,7 +190,7 @@ def getNewGoodsTitle():
                         break
                 text = text[cut_idx:]
 
-            print('============================ 第二')
+            # print('============================ 第二')
 
             # todo 直接请求产品名，最好是从产品名中识别产品的proName参数
             url = 'http://192.168.4.132:5003/goodsInfo'
@@ -210,7 +210,7 @@ def getNewGoodsTitle():
                     if i[0] == 'prt品类':
                         proName = i[-1]
 
-            print('============================ 第三')
+            # print('============================ 第三')
 
             # todo 这里是解析text参数以生成标签，其实这里是已经进行过当前这个产品涉及的所有的商品的标签的生成了
             #      但是这里又一次请求，是因为标签是被拼接到text中，且text还可能有新的人工输入，才又请求以捕获最完整的标签信息
@@ -255,8 +255,8 @@ def getNewGoodsTitle():
                     continue
                 targetTags += ','.join(eachTagValue)
 
-            print('============================ 第五')
-            print(newTagDict)
+            # print('============================ 第五')
+            # print(newTagDict)
 
             # todo six piece ；此时其实没有用 text 信息，因为text的信息已经被简化为了从其中识别出来的tags；故单纯使用标签就可以
             prompt = "请针对商品：{}，卖点如下：{}，写一段广告文案。" \
