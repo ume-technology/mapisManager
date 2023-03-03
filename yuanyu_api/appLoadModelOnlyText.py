@@ -6,6 +6,7 @@
 @Time:2023/2/15 9:21
 @Read: 可微调广告文案生成模型: 也是只使用 text 参数了
 """
+# todo change windows 加载模型的放方案
 import re
 import random
 import torch
@@ -26,17 +27,56 @@ def is_all_chinese(strs):
     return True
 
 
-print('start  loading  model. . . . . . . .')
-# tokenizer = T5Tokenizer.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1") # todo change windows
-# model = T5ForConditionalGeneration.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1")  # todo change windows
+print('************************* start  loading  model *************************')
 
-tokenizer = T5Tokenizer.from_pretrained("/home/fzm/large-v1")  # todo change linux
+# """"""
+# # tokenizer = T5Tokenizer.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1") # todo change windows
+# # model = T5ForConditionalGeneration.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1")  # todo change windows
+# tokenizer = T5Tokenizer.from_pretrained("/home/fzm/large-v1")  # todo change linux
+# model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo change linux
+#
+# device = torch.device('cuda')  # todo change linux
+# print('---------------------- use: ', device)
+# model.to(device)
+#
+#
+# def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature = 0.6
+#     """
+#     1. sample：是否抽样。生成任务，可以设置为True，保持默认;
+#     2. top_p：0-1之间，生成的内容越多样，保持默认即可；
+#     3， temperature=0.6，对于广告文案生成，默认的0.6即可；如果需要更改，保持在0.5~1之间，越高文本生成的越复杂
+#     """
+#     text = preprocess(text)
+#     # todo change linux with GPU
+#     encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)
+#     # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')
+#
+#     if not sample:
+#         out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
+#                              num_beams=1, length_penalty=0.6)
+#     else:
+#         out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
+#                              do_sample=True, top_p=top_p, temperature=temperature, no_repeat_ngram_size=3)
+#     out_text = tokenizer.batch_decode(out["sequences"], skip_special_tokens=True)
+#     return postprocess(out_text[0])
+#
+#
+# """"""
+
+# GPU Linux方法
+from modelscope.pipelines import pipeline
+from modelscope.utils.constant import Tasks
+from modelscope.models.nlp import T5ForConditionalGeneration
+from modelscope.preprocessors import TextGenerationT5Preprocessor
+
 model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo change linux
-
-device = torch.device('cuda')  # todo change linux
-print('---------------------- use: ', device)
+device = torch.device('cuda')
+print('this devive: ', device)
 model.to(device)
-print('end  loading  model . . . . . . .  .')
+preprocessor = TextGenerationT5Preprocessor(model.model_dir)
+pipeline_t2t = pipeline(task=Tasks.text2text_generation, model=model, preprocessor=preprocessor)
+
+print('************************* end  loading  model *************************')
 
 
 def preprocess(text):
@@ -48,24 +88,13 @@ def postprocess(text):
     return text.replace("\\n", "\n").replace("\\t", "\t")
 
 
-def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature = 0.6
-    """
-    1. sample：是否抽样。生成任务，可以设置为True，保持默认;
-    2. top_p：0-1之间，生成的内容越多样，保持默认即可；
-    3， temperature=0.6，对于广告文案生成，默认的0.6即可；如果需要更改，保持在0.5~1之间，越高文本生成的越复杂
-    """
+def answer(text, sample=True, top_p=1, temperature=0.7):
     text = preprocess(text)
-    # todo change linux with GPU
-    encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)
-    # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')
     if not sample:
-        out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
-                             num_beams=1, length_penalty=0.6)
+        out_text = pipeline_t2t(text, return_dict_in_generate=True, output_scores=False, max_new_tokens=512, num_beams=1, length_penalty=0.6)
     else:
-        out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
-                             do_sample=True, top_p=top_p, temperature=temperature, no_repeat_ngram_size=3)
-    out_text = tokenizer.batch_decode(out["sequences"], skip_special_tokens=True)
-    return postprocess(out_text[0])
+        out_text = pipeline_t2t(text, return_dict_in_generate=True, output_scores=False, max_new_tokens=512, do_sample=True, top_p=top_p, temperature=temperature, no_repeat_ngram_size=3)
+    return postprocess(out_text["text"])
 
 
 def generateAdsContents(text, temperature):
@@ -238,7 +267,7 @@ def getNewGoodsTitle():
                     "Ads": results
                 }
 
-            print('============================ 第四')
+            # print('============================ 第四')
 
             tagDict, newTagDict = {}, {}
             for _ in eval(tags):
