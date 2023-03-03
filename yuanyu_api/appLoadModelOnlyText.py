@@ -64,7 +64,10 @@ def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature =
     else:
         out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
                              do_sample=True, top_p=top_p, temperature=temperature, no_repeat_ngram_size=3)
+    print('---------------------1')
+    print(out)
     out_text = tokenizer.batch_decode(out["sequences"], skip_special_tokens=True)
+    print('=====================2')
     return postprocess(out_text[0])
 
 
@@ -238,7 +241,7 @@ def getNewGoodsTitle():
                     "Ads": results
                 }
 
-            print('============================ 第四')
+            # print('============================ 第四')
 
             tagDict, newTagDict = {}, {}
             for _ in eval(tags):
