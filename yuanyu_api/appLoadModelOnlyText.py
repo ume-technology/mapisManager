@@ -14,6 +14,15 @@ import requests
 from transformers import AutoTokenizer
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
+import logging
+
+logging.basicConfig(filename='appLoadModelOnlyText.log', filemode='w', level=logging.INFO,
+                    format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%m-%Y %H:%M:%S")
+
+# loggerAppLoadModelOnlyText = logging.getLogger('appLoadModelOnlyText')
+# loggerAppLoadModelOnlyTitle = logging.getLogger('appLoadModelOnlyTitle')
+
+
 import flask
 from flask import Flask
 from flask import Flask, jsonify, request
@@ -300,6 +309,8 @@ def getNewGoodsTitle():
             for i in range(6):
                 output_text = generateAdsContents(prompt, temperature)
                 results[i] = output_text
+            logging.info('Giikin - Model generate Ads Text successful：', results)
+            logging.info('------------------------------------------------------------------------------------------------------')
             return {
                 "status": 1,
                 "Note": "Giikin - 根据给定的产品和其背后的标签信息，\n"
@@ -307,7 +318,8 @@ def getNewGoodsTitle():
                 "Ads": results
             }
         except Exception as e:
-            print(e)
+            logging.info('【weight】在生成广告文案时好像出了一些问题: ', e)
+            logging.info('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *')
             return {"status": 0, "Note": "【weight】在生成广告文案时好像出了一些问题！"}
 
 
