@@ -49,14 +49,18 @@ def postprocess(text):
 print('************************* start  loading  model *************************')
 
 # """"""
-# tokenizer = T5Tokenizer.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1") # todo change windows
-# model = T5ForConditionalGeneration.from_pretrained(r"F:\PreModels\ClueAIChatYuan-large-v1")  # todo change windows
-tokenizer = T5Tokenizer.from_pretrained("/home/fzm/large-v1")  # todo change linux
-model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo change linux
+tokenizer = T5Tokenizer.from_pretrained(r"F:\Pictures\modelScopeHub\ClueAIChatYuan-large-v1")  # todo change windows
+model = T5ForConditionalGeneration.from_pretrained(r"F:\Pictures\modelScopeHub\ClueAIChatYuan-large-v1")  # todo change windows
 
-device = torch.device('cuda')  # todo change linux
+# tokenizer = T5Tokenizer.from_pretrained("/home/fzm/large-v1")  # todo change linux
+# model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo change linux
+
+# device = torch.device('cuda')  # todo change linux
+device = torch.device('cpu')  # todo change linux
 print('this devive: ', device)
-model.to(device)
+
+
+# model.to(device)
 
 
 def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature = 0.6
@@ -67,8 +71,8 @@ def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature =
     """
     text = preprocess(text)
     # todo change linux with GPU
-    encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)
-    # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')
+    # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)
+    encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')
 
     if not sample:
         out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
@@ -137,7 +141,7 @@ def getNewGoodsTitle():
         temperature = float(temperature)
         try:
             # todo 首先明确这个商品具备的标签
-            url = 'http://192.168.4.132:5003/goodsInfo'
+            url = 'http://192.168.4.101:5003/goodsInfo'
             params = {'goodsId': 0, 'goodsTitle': title}
             tags = requests.get(url=url, params=params).text
             if not tags or tags is None or len(tags) == 0:
@@ -237,7 +241,7 @@ def getNewGoodsTitle():
             # print('============================ 第二')
 
             # todo 直接请求产品名，最好是从产品名中识别产品的proName参数
-            url = 'http://192.168.4.132:5003/goodsInfo'
+            url = 'http://192.168.4.101:5003/goodsInfo'
             params = {'goodsId': 0, 'goodsTitle': proName}
             tags = requests.get(url=url, params=params).text
             tags = eval(tags)
@@ -259,7 +263,7 @@ def getNewGoodsTitle():
             # todo 这里是解析text参数以生成标签，其实这里是已经进行过当前这个产品涉及的所有的商品的标签的生成了
             #      但是这里又一次请求，是因为标签是被拼接到text中，且text还可能有新的人工输入，才又请求以捕获最完整的标签信息
             # wait  是不是应该对text进行一些分割处理？暂时是直接过model重新识别标签
-            url = 'http://192.168.4.132:5003/goodsInfo'
+            url = 'http://192.168.4.101:5003/goodsInfo'
             params = {'goodsId': 0, 'goodsTitle': text}
             tags = requests.get(url=url, params=params).text
             # print("*" * 50)
