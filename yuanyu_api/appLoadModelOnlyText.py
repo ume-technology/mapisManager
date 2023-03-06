@@ -58,9 +58,7 @@ model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo
 device = torch.device('cuda')  # todo change linux
 # device = torch.device('cpu')  # todo change linux
 print('this devive: ', device)
-
-
-# model.to(device)
+model.to(device)
 
 
 def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature = 0.6
