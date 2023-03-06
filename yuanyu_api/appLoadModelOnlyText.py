@@ -49,14 +49,14 @@ def postprocess(text):
 print('************************* start  loading  model *************************')
 
 # """"""
-tokenizer = T5Tokenizer.from_pretrained(r"F:\Pictures\modelScopeHub\ClueAIChatYuan-large-v1")  # todo change windows
-model = T5ForConditionalGeneration.from_pretrained(r"F:\Pictures\modelScopeHub\ClueAIChatYuan-large-v1")  # todo change windows
+# tokenizer = T5Tokenizer.from_pretrained(r"F:\Pictures\modelScopeHub\ClueAIChatYuan-large-v1")  # todo change windows
+# model = T5ForConditionalGeneration.from_pretrained(r"F:\Pictures\modelScopeHub\ClueAIChatYuan-large-v1")  # todo change windows
 
-# tokenizer = T5Tokenizer.from_pretrained("/home/fzm/large-v1")  # todo change linux
-# model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo change linux
+tokenizer = T5Tokenizer.from_pretrained("/home/fzm/large-v1")  # todo change linux
+model = T5ForConditionalGeneration.from_pretrained("/home/fzm/large-v1")  # todo change linux
 
-# device = torch.device('cuda')  # todo change linux
-device = torch.device('cpu')  # todo change linux
+device = torch.device('cuda')  # todo change linux
+# device = torch.device('cpu')  # todo change linux
 print('this devive: ', device)
 
 
@@ -71,8 +71,8 @@ def answer(text, sample=True, top_p=1, temperature=0.7):  # 建议 temperature =
     """
     text = preprocess(text)
     # todo change linux with GPU
-    # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)
-    encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')
+    encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to(device)  # todo change device
+    # encoding = tokenizer(text=[text], truncation=True, padding=True, max_length=768, return_tensors="pt").to('cpu')  # todo change device
 
     if not sample:
         out = model.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_new_tokens=512,
